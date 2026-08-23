@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Grammar with Ms Linda</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;700;800;900&family=Quicksand:wght@600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --teal: #0a6962;
+            --teal-light: #ccfbf1;
+            --orange: #ff7c00;
+            --orange-light: #ffedd5;
+            --orange-dark: #d96900;
+            --yellow: #fde047;
+            --pink: #fbcfe8;
+        }
+
+        body {
+            /* Font chữ bo tròn, dễ thương kiểu hoạt hình */
+            font-family: 'Nunito', sans-serif; 
+            background: linear-gradient(135deg, #e0f2fe 0%, #fef08a 100%);
+            background-attachment: fixed;
+            color: #334155;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Họa tiết nền bong bóng bay */
+        .bg-bubbles {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(255,255,255,0.4) 20px, transparent 21px),
+                radial-gradient(circle at 85% 30%, rgba(255,255,255,0.4) 30px, transparent 31px),
+                radial-gradient(circle at 90% 80%, rgba(255,255,255,0.4) 15px, transparent 16px),
+                radial-gradient(circle at 10% 90%, rgba(255,255,255,0.4) 25px, transparent 26px);
+            animation: float-bubbles 20s linear infinite;
+        }
+
+        @keyframes float-bubbles {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0); }
+        }
+
+        .font-serif-custom {
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        /* Style hộp 3D phong cách Cartoon (Neubrutalism cute) */
+        .sketchnote-box {
+            background: #ffffff;
+            border: 4px solid var(--teal);
+            border-radius: 30px;
+            box-shadow: 0px 10px 0px var(--teal), 0px 10px 20px rgba(0,0,0,0.1);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        /* Nút Start 3D Kẹo ngọt */
+        .btn-cta {
+            background: linear-gradient(to bottom, #ff9a3d, var(--orange));
+            border: 3px solid #ffffff;
+            border-radius: 100px;
+            box-shadow: 0 6px 0 var(--orange-dark), 0 10px 15px rgba(255, 124, 0, 0.4);
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .btn-cta:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 0 var(--orange-dark), 0 12px 20px rgba(255, 124, 0, 0.5);
+            filter: brightness(1.05);
+        }
+        .btn-cta:active:not(:disabled) {
+            transform: translateY(6px);
+            box-shadow: 0 0px 0 var(--orange-dark);
+        }
+        .btn-cta:disabled {
+            background: #cbd5e1;
+            box-shadow: 0 6px 0 #94a3b8;
+            cursor: not-allowed;
+            color: #64748b;
+        }
+
+        /* Style đặc biệt cho nút lựa chọn đáp án */
+        #options-container button {
+            background: #ffffff !important;
+            border: 3px solid #cbd5e1 !important;
+            border-radius: 20px !important;
+            box-shadow: 0 5px 0 #cbd5e1 !important;
+            margin-bottom: 8px;
+            transition: all 0.15s ease !important;
+            display: flex;
+            align-items: center;
+            padding: 16px 20px !important;
+            font-family: 'Nunito', sans-serif !important;
+            font-weight: 800 !important;
+            color: #334155 !important;
+        }
+        #options-container button:hover:not(:disabled) {
+            border-color: var(--teal) !important;
+            box-shadow: 0 5px 0 var(--teal) !important;
+            background: var(--teal-light) !important;
+            transform: translateY(-2px);
+        }
+        #options-container button:active:not(:disabled) {
+            transform: translateY(5px);
+            box-shadow: 0 0px 0 var(--teal) !important;
+        }
+        /* Style chữ A, B, C, D */
+        #options-container button span {
+            background: var(--orange);
+            color: white !important;
+            width: 40px !important;
+            height: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            border: 2px solid #ffffff;
+            box-shadow: 0 3px 0 var(--orange-dark);
+            margin-right: 15px;
+            font-size: 18px;
+        }
+
+        /* Trạng thái đáp án Đúng */
+        #options-container button.bg-\\[\\#e6f4f1\\] {
+            background: #dcfce7 !important;
+            border-color: #22c55e !important;
+            box-shadow: 0 5px 0 #16a34a !important;
+            color: #166534 !important;
+            animation: bounce-sm 0.4s ease;
+        }
+        /* Trạng thái đáp án Sai */
+        #options-container button.bg-\\[\\#fff4eb\\] {
+            background: #fee2e2 !important;
+            border-color: #ef4444 !important;
+            box-shadow: 0 5px 0 #dc2626 !important;
+            color: #991b1b !important;
+        }
+
+        /* Progress Bar sọc kẹo ngọt */
+        .candy-stripe {
+            background-image: linear-gradient(45deg, 
+                rgba(255,255,255,0.2) 25%, transparent 25%, 
+                transparent 50%, rgba(255,255,255,0.2) 50%, 
+                rgba(255,255,255,0.2) 75%, transparent 75%, transparent);
+            background-size: 20px 20px;
+            animation: move-stripe 1s linear infinite;
+        }
+        @keyframes move-stripe {
+            0% { background-position: 0 0; }
+            100% { background-position: 20px 0; }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--teal); }
+
+        /* Animations */
+        .animate-float { animation: float 3s ease-in-out infinite; }
+        .animate-wiggle { animation: wiggle 2s ease-in-out infinite; }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(-3deg); }
+            50% { transform: rotate(3deg); }
+        }
+        @keyframes bounce-sm {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .hidden { display: none !important; }
+        .zoom-in { animation: zoomIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes zoomIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        .title-shadow {
+            text-shadow: 2px 2px 0 #ffffff, -2px -2px 0 #ffffff, 2px -2px 0 #ffffff, -2px 2px 0 #ffffff, 0px 4px 0px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4 sm:p-6 md:p-8">
+
+    <div class="bg-bubbles"></div>
+
+    <div id="app" class="w-full max-w-3xl relative z-10">
+        
+        <!-- ================= WELCOME SCREEN ================= -->
+        <div id="welcome-screen" class="sketchnote-box p-8 sm:p-12 text-center zoom-in mt-16">
+            <div class="absolute -top-24 left-1/2 transform -translate-x-1/2 w-48 h-48 animate-float drop-shadow-xl z-20 pointer-events-none">
+                <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/People/Girl.png" alt="Cute Student" class="w-full h-full object-contain">
+            </div>
+            <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Open%20Book.png" alt="Book" class="absolute -top-8 -left-4 w-16 h-16 animate-wiggle drop-shadow-md">
+            <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Star.png" alt="Star" class="absolute -top-4 -right-4 w-12 h-12 animate-float drop-shadow-md" style="animation-delay: 1s;">
+
+            <div class="mt-16 mb-8">
+                <h1 class="text-4xl sm:text-5xl font-black text-[#0a6962] mb-3 tracking-tight title-shadow">
+                    English Grammar
+                </h1>
+                <div class="inline-block bg-[#ffedd5] border-2 border-[#ff7c00] rounded-full px-6 py-2 transform -rotate-2">
+                    <h2 class="text-lg sm:text-xl font-extrabold text-[#ff7c00]">Học tiếng Anh siêu vui cùng Ms Linda</h2>
+                </div>
+            </div>
+            
+            <div class="max-w-sm mx-auto bg-gray-50 border-3 border-gray-100 rounded-3xl p-6 shadow-inner">
+                <p class="mb-3 text-xl font-black text-gray-700 flex items-center justify-center gap-2">
+                    <i data-lucide="smile" class="text-[#ff7c00]"></i> Con tên là gì nhỉ?
+                </p>
+                <input type="text" id="student-name" placeholder="Nhập tên của con vào đây..." 
+                       class="w-full p-4 border-4 border-gray-200 rounded-2xl outline-none focus:border-[#ff7c00] focus:ring-4 focus:ring-[#ff7c00]/20 text-center text-xl mb-6 font-bold text-[#0a6962] transition-all bg-white shadow-sm">
+                
+                <button id="btn-start" disabled class="btn-cta w-full py-4 text-2xl font-black flex items-center justify-center gap-2">
+                    Bắt đầu học thôi! <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Rocket.png" class="w-8 h-8">
+                </button>
+            </div>
+        </div>
+
+        <!-- ================= HOME SCREEN ================= -->
+        <div id="home-screen" class="sketchnote-box p-6 sm:p-10 zoom-in hidden">
+            <div class="flex flex-col sm:flex-row justify-between items-center mb-8 bg-[#f8fafc] border-4 border-gray-200 p-4 rounded-3xl shadow-sm gap-4">
+                <div class="flex items-center gap-3">
+                   <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Open%20Book.png" class="w-24 h-24 mx-auto mb-4 relative z-10 animate-float group-hover:scale-110 transition-transform">
+                    <h1 class="text-2xl font-black text-[#0a6962]">English Grammar</h1>
+                </div>
+                <div class="bg-white px-6 py-3 rounded-2xl border-4 border-[#ff7c00] shadow-[0_4px_0_#ff7c00] transform rotate-2 animate-wiggle">
+                    <p id="greeting-text" class="text-xl font-black text-[#ff7c00] flex items-center gap-2">
+                        Chào con! <span class="text-2xl">👋</span>
+                    </p>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <!-- Theory Card -->
+                <div onclick="showScreen('theory-screen')" class="group cursor-pointer bg-white border-4 border-gray-200 rounded-3xl p-6 text-center hover:border-[#0a6962] hover:bg-[#f0fdfa] transition-all shadow-[0_6px_0_#e2e8f0] hover:shadow-[0_8px_0_#0a6962] hover:-translate-y-2 relative overflow-hidden">
+                    <div class="absolute -right-4 -top-4 w-24 h-24 bg-teal-100 rounded-full z-0 opacity-50 group-hover:scale-150 transition-transform duration-500"></div>
+                    <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Books.png" class="w-24 h-24 mx-auto mb-4 relative z-10 animate-float group-hover:scale-110 transition-transform">
+                    <h2 class="text-3xl font-black text-[#0a6962] mb-2 relative z-10">📖 Lý thuyết</h2>
+                    <p class="text-base font-bold text-gray-500 px-2 relative z-10">Bí kíp đánh trọng âm cực chuẩn từ cô Linda.</p>
+                </div>                
+                <!-- Practice Card -->
+                <div onclick="startPractice()" class="group cursor-pointer bg-white border-4 border-gray-200 rounded-3xl p-6 text-center hover:border-[#ff7c00] hover:bg-[#fff7ed] transition-all shadow-[0_6px_0_#e2e8f0] hover:shadow-[0_8px_0_#ff7c00] hover:-translate-y-2 relative overflow-hidden">
+                    <div class="absolute -left-4 -bottom-4 w-24 h-24 bg-orange-100 rounded-full z-0 opacity-50 group-hover:scale-150 transition-transform duration-500"></div>
+                    <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Pencil.png" class="w-24 h-24 mx-auto mb-4 relative z-10 animate-float group-hover:scale-110 transition-transform" style="animation-delay: 1s;">
+                    <h2 class="text-3xl font-black text-[#ff7c00] mb-2 relative z-10">✍️ Thực hành</h2>
+                    <p class="text-base font-bold text-gray-500 px-2 relative z-10">Luyện tập đánh trọng âm siêu vui.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= THEORY SCREEN ================= -->
+        <div id="theory-screen" class="sketchnote-box p-6 sm:p-8 zoom-in hidden flex-col max-h-[85vh]">
+            <div class="flex items-center justify-between mb-6 border-b-4 border-gray-100 pb-4 shrink-0">
+                <button onclick="showScreen('home-screen')" class="flex items-center gap-2 text-[#0a6962] font-black hover:bg-teal-50 bg-white border-2 border-[#0a6962] px-4 py-2 rounded-2xl shadow-[0_4px_0_#0a6962] transition-all hover:translate-y-1 hover:shadow-[0_2px_0_#0a6962] active:shadow-none active:translate-y-2">
+                    <i data-lucide="arrow-left" class="w-6 h-6"></i> Quay lại
+                </button>
+                <div class="flex items-center gap-2">
+                    <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Light%20Bulb.png" class="w-8 h-8 animate-pulse">
+                    <h2 class="text-2xl sm:text-3xl font-black text-[#0a6962] uppercase title-shadow">Word Stress 2</h2>
+                </div>
+            </div>
+            
+            <div class="space-y-6 overflow-y-auto pr-3 pb-8 flex-grow">
+                <!-- Rule 1 -->
+                <div class="relative bg-white border-4 border-[#0a6962] rounded-3xl p-5 shadow-[4px_4px_0_#0a6962]">
+                    <div class="absolute -top-4 -left-3 bg-[#0a6962] text-white w-10 h-10 rounded-xl flex items-center justify-center font-black text-xl border-2 border-white shadow-md transform -rotate-6">1</div>
+                    <h3 class="font-black text-2xl mb-4 text-[#0a6962] ml-6 border-b-2 border-dashed border-teal-200 pb-2">Từ có hai âm tiết</h3>
+                    <div class="space-y-4 text-gray-700 font-bold text-lg">
+                        <div class="bg-teal-50 p-4 rounded-2xl border-2 border-teal-100">
+                            <p class="flex items-center gap-2 text-[#0a6962]"><img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Star.png" class="w-5 h-5"> Danh từ & Tính từ: Nhấn <strong>âm 1</strong>.</p>
+                            <p class="mt-2 text-xl tracking-wider text-center">
+                                <span class="bg-teal-200 text-teal-900 px-2 py-1 rounded-lg border-2 border-teal-300">ˈcoun</span>try, 
+                                <span class="bg-teal-200 text-teal-900 px-2 py-1 rounded-lg border-2 border-teal-300">ˈbuil</span>ding, 
+                                <span class="bg-teal-200 text-teal-900 px-2 py-1 rounded-lg border-2 border-teal-300">ˈfa</span>mous
+                            </p>
+                        </div>
+                        <div class="bg-orange-50 p-4 rounded-2xl border-2 border-orange-100">
+                            <p class="flex items-center gap-2 text-[#ff7c00]"><img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Star.png" class="w-5 h-5"> Động từ: Nhấn <strong>âm 2</strong>.</p>
+                            <p class="mt-2 text-xl tracking-wider text-center">
+                                ex<span class="bg-orange-200 text-orange-900 px-2 py-1 rounded-lg border-2 border-orange-300">ˈplore</span>, 
+                                pre<span class="bg-orange-200 text-orange-900 px-2 py-1 rounded-lg border-2 border-orange-300">ˈpare</span>, 
+                                re<span class="bg-orange-200 text-orange-900 px-2 py-1 rounded-lg border-2 border-orange-300">ˈcycle</span>
+                            </p>
+                            <p class="mt-2 text-sm text-center text-red-500">Ngoại lệ (Động từ âm 1): ˈtravel, ˈvisit, ˈfollow, ˈfinish, ˈanswer</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Rule 2 -->
+                <div class="relative bg-white border-4 border-[#ff7c00] rounded-3xl p-5 shadow-[4px_4px_0_#ff7c00]">
+                    <div class="absolute -top-4 -left-3 bg-[#ff7c00] text-white w-10 h-10 rounded-xl flex items-center justify-center font-black text-xl border-2 border-white shadow-md transform -rotate-6">2</div>
+                    <h3 class="font-black text-2xl mb-4 text-[#ff7c00] ml-6 border-b-2 border-dashed border-orange-200 pb-2">Tiền tố & Hậu tố quen thuộc</h3>
+                    <div class="space-y-4 text-gray-700 font-bold text-lg">
+                        <div class="bg-orange-50 p-4 rounded-2xl border-2 border-orange-100">
+                            <p class="mb-2">👉 Đuôi <strong>-tion, -sion, -ic</strong>: Nhấn <strong>âm ngay trước nó</strong></p>
+                            <p class="text-xl tracking-wider text-center">
+                                infor<span class="bg-orange-200 text-orange-900 px-2 py-1 rounded-lg border-2 border-orange-300">ˈma</span>tion, 
+                                his<span class="bg-orange-200 text-orange-900 px-2 py-1 rounded-lg border-2 border-orange-300">ˈto</span>ric
+                            </p>
+                        </div>
+                        <div class="bg-teal-50 p-4 rounded-2xl border-2 border-teal-100">
+                            <p class="mb-2">👉 Đuôi <strong>-ity</strong>: Nhấn <strong>âm thứ 3 từ cuối lên</strong></p>
+                            <p class="text-xl tracking-wider text-center">
+                                elec<span class="bg-teal-200 text-teal-900 px-2 py-1 rounded-lg border-2 border-teal-300">ˈtri</span>city, 
+                                possi<span class="bg-teal-200 text-teal-900 px-2 py-1 rounded-lg border-2 border-teal-300">ˈbi</span>lity
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Rule 3 -->
+                <div class="relative bg-white border-4 border-[#0a6962] rounded-3xl p-5 shadow-[4px_4px_0_#0a6962]">
+                    <div class="absolute -top-4 -left-3 bg-[#0a6962] text-white w-10 h-10 rounded-xl flex items-center justify-center font-black text-xl border-2 border-white shadow-md transform -rotate-6">3</div>
+                    <h3 class="font-black text-2xl mb-4 text-[#0a6962] ml-6 border-b-2 border-dashed border-teal-200 pb-2">Đuôi -eer, -ese & Các từ dài</h3>
+                    <div class="space-y-4 text-gray-700 font-bold text-lg">
+                        <div class="bg-teal-50 p-4 rounded-2xl border-2 border-teal-100">
+                            <p class="mb-3 text-center">👉 Đuôi -eer, -ese: Trọng âm ở <strong>âm cuối</strong></p>
+                            <p class="text-xl tracking-wider text-center">
+                                engi<span class="bg-teal-200 text-teal-900 px-2 py-1 rounded-lg border-2 border-teal-300">ˈneer</span>, 
+                                Japa<span class="bg-teal-200 text-teal-900 px-2 py-1 rounded-lg border-2 border-teal-300">ˈnese</span>
+                            </p>
+                        </div>
+                        <div class="bg-orange-50 p-4 rounded-2xl border-2 border-orange-100">
+                            <p class="mb-3 text-center">👉 Các từ dài hay gặp (nhấn <strong>âm 1</strong>)</p>
+                            <p class="text-xl tracking-wider text-center">
+                                <span class="bg-orange-200 text-orange-900 px-2 py-1 rounded-lg border-2 border-orange-300">ˈna</span>tural, 
+                                <span class="bg-orange-200 text-orange-900 px-2 py-1 rounded-lg border-2 border-orange-300">ˈa</span>nimal, 
+                                <span class="bg-orange-200 text-orange-900 px-2 py-1 rounded-lg border-2 border-orange-300">ˈca</span>pital
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tips -->
+                <div class="relative bg-[#fff7ed] border-4 border-[#ff7c00] rounded-3xl p-5 shadow-[4px_4px_0_#ff7c00]">
+                    <div class="absolute -top-4 -left-3 bg-[#ff7c00] text-white w-10 h-10 rounded-xl flex items-center justify-center font-black text-xl border-2 border-white shadow-md transform -rotate-6">💡</div>
+                    <h3 class="font-black text-2xl mb-4 text-[#ff7c00] ml-6 border-b-2 border-dashed border-orange-200 pb-2">Mẹo làm bài 3 bước</h3>
+                    <div class="text-gray-700 font-bold text-base space-y-2">
+                        <p><strong>Bước 1:</strong> Xác định từ có bao nhiêu âm tiết.</p>
+                        <p><strong>Bước 2:</strong> Áp dụng quy tắc (Danh/Tính âm 1, Động âm 2, đuôi -tion...)</p>
+                        <p><strong>Bước 3:</strong> Nếu bất quy tắc, cố gắng nhớ cách đọc hoặc dùng phép loại trừ các đáp án còn lại.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= QUIZ SCREEN ================= -->
+        <div id="quiz-screen" class="sketchnote-box p-6 sm:p-8 zoom-in hidden mt-4">
+            <div class="flex items-center justify-between mb-8 gap-4 bg-gray-50 p-3 rounded-2xl border-2 border-gray-200">
+                <button onclick="showScreen('home-screen')" class="w-12 h-12 bg-white flex items-center justify-center rounded-xl border-2 border-gray-300 shadow-[0_4px_0_#cbd5e1] hover:bg-gray-100 transition active:translate-y-1 active:shadow-none shrink-0 text-gray-600">
+                    <i data-lucide="x" class="w-7 h-7"></i>
+                </button>
+                <div class="flex-grow">
+                    <div class="flex justify-between text-sm font-black text-gray-500 mb-2 uppercase tracking-wide px-1">
+                        <span>Tiến độ</span>
+                        <span class="text-[#ff7c00] bg-orange-100 px-3 py-1 rounded-full">Câu <span id="current-q-index">1</span> / <span id="total-q"></span></span>
+                    </div>
+                    <div class="w-full bg-white rounded-full h-5 border-2 border-gray-200 shadow-inner overflow-hidden p-0.5">
+                        <div id="progress-bar" class="bg-[#22c55e] h-full rounded-full transition-all duration-500 ease-out relative candy-stripe"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="relative bg-white border-4 border-[#0a6962] rounded-3xl p-6 sm:p-8 mb-8 shadow-[0_8px_0_#0a6962]">
+                <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Thinking%20Face.png" class="absolute -top-8 -right-4 w-16 h-16 animate-wiggle drop-shadow-md">
+                <h2 id="question-text" class="text-xl sm:text-2xl font-black text-center text-[#0a6962] leading-relaxed"></h2>
+            </div>
+
+            <div id="options-container" class="grid grid-cols-1 gap-4 mb-6">
+                <!-- Options injected by JS -->
+            </div>
+
+            <div id="explanation-box" class="hidden relative bg-[#ffedd5] border-4 border-[#ff7c00] rounded-3xl p-6 sm:p-8 mb-6 shadow-[0_6px_0_#ff7c00] transform rotate-1 mt-10">
+                <div class="absolute -top-8 left-1/2 transform -translate-x-1/2">
+                    <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Nerd%20Face.png" class="w-16 h-16 drop-shadow-md animate-bounce-sm">
+                </div>
+                <p id="explanation-text" class="font-serif-custom text-[#9a4b00] text-xl font-bold leading-relaxed mt-4 text-center"></p>
+            </div>
+
+            <button id="btn-next" class="hidden btn-cta w-full py-4 text-2xl font-black flex items-center justify-center gap-2 mt-6">
+                Câu tiếp theo <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Flying%20Saucer.png" class="w-8 h-8">
+            </button>
+        </div>
+
+        <!-- ================= RESULT SCREEN ================= -->
+        <div id="result-screen" class="sketchnote-box p-8 sm:p-12 text-center zoom-in hidden mt-10 relative overflow-hidden">
+            <div class="absolute top-4 left-4 text-4xl opacity-20 animate-wiggle">✨</div>
+            <div class="absolute bottom-10 right-10 text-4xl opacity-20 animate-wiggle" style="animation-delay: 0.5s">🎉</div>
+            <div class="absolute top-1/2 left-2 text-4xl opacity-20 animate-float">🌟</div>
+            
+            <div class="relative w-40 h-40 mx-auto mb-6">
+                <div class="absolute inset-0 bg-yellow-200 rounded-full animate-ping opacity-50"></div>
+                <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Activities/Trophy.png" class="w-full h-full relative z-10 drop-shadow-2xl animate-float">
+            </div>
+            
+            <h1 class="text-4xl sm:text-5xl font-black text-[#ff7c00] mb-4 title-shadow transform -rotate-2">Tuyệt Đỉnh!</h1>
+            <p id="result-greeting" class="text-2xl text-[#0a6962] font-black mb-8 bg-teal-50 inline-block px-6 py-2 rounded-full border-2 border-teal-200"></p>
+            
+            <div class="bg-white border-4 border-gray-200 rounded-3xl p-8 max-w-sm mx-auto mb-10 shadow-[0_8px_0_#e2e8f0]">
+                <p class="text-lg font-bold text-gray-400 uppercase tracking-widest mb-2 flex justify-center items-center gap-2">
+                    <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Direct%20Hit.png" class="w-6 h-6"> Điểm số của con
+                </p>
+                <div class="text-7xl font-black text-[#0a6962]">
+                    <span id="score"></span><span class="text-4xl text-gray-300 mx-2">/</span><span id="total-score" class="text-4xl text-gray-300"></span>
+                </div>
+            </div>
+            
+            <button onclick="showScreen('home-screen')" class="btn-cta text-white px-12 py-5 text-2xl font-black flex items-center justify-center mx-auto gap-3">
+                <i data-lucide="home" class="w-8 h-8"></i> Về trang chủ
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        // Data: Bộ 60 câu hỏi nâng cao (Bài 18, 19, 20)
+        const quizData = [
+            // ==========================================
+            // BÀI 18: BÀI TẬP NÂNG CAO (CHỌN TỪ CÓ TRỌNG ÂM KHÁC)
+            // ==========================================
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["student", "teacher", "complete", "classmate"], correct: 2, explanation: "👉 <b>comˈplete</b> (động từ) nhấn âm 2.<br>❌ Các danh từ còn lại nhấn âm 1." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["address", "enjoy", "prepare", "birthday"], correct: 3, explanation: "👉 <b>ˈbirthday</b> (danh từ ghép) nhấn âm 1.<br>❌ Các từ còn lại nhấn âm 2." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["friendly", "helpful", "careful", "invite"], correct: 3, explanation: "👉 <b>inˈvite</b> (động từ) nhấn âm 2.<br>❌ Các tính từ còn lại nhấn âm 1." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["country", "village", "around", "garden"], correct: 2, explanation: "👉 <b>aˈround</b> nhấn âm 2.<br>❌ Các danh từ tự nhiên còn lại nhấn âm 1." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["dentist", "farmer", "doctor", "advice"], correct: 3, explanation: "👉 <b>adˈvice</b> nhấn âm 2.<br>❌ Các danh từ chỉ nghề nghiệp nhấn âm 1." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["recycle", "return", "answer", "protect"], correct: 2, explanation: "👉 <b>ˈanswer</b> (động từ ngoại lệ) nhấn âm 1.<br>❌ Các động từ còn lại nhấn âm 2." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["famous", "future", "improve", "modern"], correct: 2, explanation: "👉 <b>imˈprove</b> (động từ) nhấn âm 2.<br>❌ Các từ còn lại nhấn âm 1." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["travel", "follow", "visit", "reduce"], correct: 3, explanation: "👉 <b>reˈduce</b> (động từ) nhấn âm 2.<br>❌ Các động từ còn lại là ngoại lệ nhấn âm 1." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["family", "favourite", "beautiful", "computer"], correct: 3, explanation: "👉 <b>comˈputer</b> nhấn âm 2.<br>❌ Các từ dài còn lại nhấn âm 1." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["hospital", "important", "medicine", "accident"], correct: 1, explanation: "👉 <b>imˈportant</b> nhấn âm 2.<br>❌ Các từ dài còn lại nhấn âm 1." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["dangerous", "wonderful", "exciting", "interesting"], correct: 2, explanation: "👉 <b>exˈciting</b> nhấn âm 2.<br>❌ Các tính từ dài còn lại nhấn âm 1." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["delicious", "expensive", "important", "holiday"], correct: 3, explanation: "👉 <b>ˈholiday</b> nhấn âm 1.<br>❌ Các từ còn lại đều nhấn âm 2." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["engineer", "Japanese", "Vietnamese", "exercise"], correct: 3, explanation: "👉 <b>ˈexercise</b> nhấn âm 1.<br>❌ Các từ còn lại (đuôi -eer/-ese) nhấn âm cuối." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["pollution", "protection", "vacation", "animal"], correct: 3, explanation: "👉 <b>ˈanimal</b> nhấn âm 1.<br>❌ Các từ còn lại đuôi -tion nhấn âm 2." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["education", "information", "medicine", "celebration"], correct: 2, explanation: "👉 <b>ˈmedicine</b> nhấn âm 1.<br>❌ Các từ còn lại đuôi -tion nhấn âm 3." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["natural", "capital", "attractive", "popular"], correct: 2, explanation: "👉 <b>atˈtractive</b> nhấn âm 2.<br>❌ Các từ còn lại đều nhấn âm 1." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["environment", "adventure", "important", "family"], correct: 3, explanation: "👉 <b>ˈfamily</b> nhấn âm 1.<br>❌ Các từ còn lại đều nhấn âm 2." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["afternoon", "hospital", "engineer", "volunteer"], correct: 1, explanation: "👉 <b>ˈhospital</b> nhấn âm 1.<br>❌ Các từ còn lại nhấn âm cuối (âm 3)." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["historic", "fantastic", "favourite", "electric"], correct: 2, explanation: "👉 <b>ˈfavourite</b> nhấn âm 1.<br>❌ Các từ còn lại đuôi -ic nhấn âm 2." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["examination", "pronunciation", "communication", "beautiful"], correct: 3, explanation: "👉 <b>ˈbeautiful</b> nhấn âm 1.<br>❌ Các từ còn lại đuôi -tion nhấn âm 4." },
+
+            // ==========================================
+            // BÀI 19: MINI TEST NÂNG CAO 1
+            // ==========================================
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["pupil", "student", "teacher", "about"], correct: 3, explanation: "👉 <b>aˈbout</b> bắt đầu bằng 'a-' nhấn âm 2.<br>❌ Các từ còn lại nhấn âm 1." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["invite", "hobby", "birthday", "classmate"], correct: 0, explanation: "👉 <b>inˈvite</b> (động từ) nhấn âm 2.<br>❌ Các danh từ còn lại nhấn âm 1." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["friendly", "helpful", "enjoy", "careful"], correct: 2, explanation: "👉 <b>enˈjoy</b> (động từ) nhấn âm 2.<br>❌ Các tính từ còn lại nhấn âm 1." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["village", "country", "garden", "between"], correct: 3, explanation: "👉 <b>beˈtween</b> bắt đầu bằng 'be-' nhấn âm 2.<br>❌ Các danh từ còn lại nhấn âm 1." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["teacher", "dentist", "advice", "doctor"], correct: 2, explanation: "👉 <b>adˈvice</b> bắt đầu bằng 'a-' nhấn âm 2.<br>❌ Các danh từ còn lại nhấn âm 1." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["travel", "protect", "visit", "follow"], correct: 1, explanation: "👉 <b>proˈtect</b> (động từ) nhấn âm 2.<br>❌ Các động từ còn lại là ngoại lệ nhấn âm 1." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["famous", "modern", "return", "future"], correct: 2, explanation: "👉 <b>reˈturn</b> (động từ) nhấn âm 2.<br>❌ Các từ còn lại nhấn âm 1." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["prepare", "recycle", "answer", "improve"], correct: 2, explanation: "👉 <b>ˈanswer</b> (động từ ngoại lệ) nhấn âm 1.<br>❌ Các động từ còn lại nhấn âm 2." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["computer", "beautiful", "family", "favourite"], correct: 0, explanation: "👉 <b>comˈputer</b> nhấn âm 2.<br>❌ Các từ còn lại nhấn âm 1." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["medicine", "hospital", "delicious", "accident"], correct: 2, explanation: "👉 <b>deˈlicious</b> nhấn âm 2.<br>❌ Các từ còn lại nhấn âm 1." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["wonderful", "dangerous", "beautiful", "exciting"], correct: 3, explanation: "👉 <b>exˈciting</b> nhấn âm 2.<br>❌ Các tính từ còn lại nhấn âm 1." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["exciting", "expensive", "important", "holiday"], correct: 3, explanation: "👉 <b>ˈholiday</b> nhấn âm 1.<br>❌ Các từ còn lại đều nhấn âm 2." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["engineer", "Vietnamese", "exercise", "Japanese"], correct: 2, explanation: "👉 <b>ˈexercise</b> nhấn âm 1.<br>❌ Các từ còn lại nhấn âm cuối (âm 3)." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["protection", "pollution", "animal", "vacation"], correct: 2, explanation: "👉 <b>ˈanimal</b> nhấn âm 1.<br>❌ Các từ còn lại đuôi -tion nhấn âm 2." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["natural", "capital", "popular", "attractive"], correct: 3, explanation: "👉 <b>atˈtractive</b> nhấn âm 2.<br>❌ Các từ còn lại nhấn âm 1." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["education", "medicine", "information", "celebration"], correct: 1, explanation: "👉 <b>ˈmedicine</b> nhấn âm 1.<br>❌ Các từ còn lại đuôi -tion nhấn âm 3." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["environment", "adventure", "dangerous", "important"], correct: 2, explanation: "👉 <b>ˈdangerous</b> nhấn âm 1.<br>❌ Các từ còn lại nhấn âm 2." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["afternoon", "engineer", "hospital", "volunteer"], correct: 2, explanation: "👉 <b>ˈhospital</b> nhấn âm 1.<br>❌ Các từ còn lại nhấn âm cuối (âm 3)." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["fantastic", "historic", "favourite", "electric"], correct: 2, explanation: "👉 <b>ˈfavourite</b> nhấn âm 1.<br>❌ Các từ còn lại đuôi -ic nhấn âm 2." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["communication", "examination", "beautiful", "pronunciation"], correct: 2, explanation: "👉 <b>ˈbeautiful</b> nhấn âm 1.<br>❌ Các từ còn lại đuôi -tion nhấn âm 4." },
+
+            // ==========================================
+            // BÀI 20: MINI TEST NÂNG CAO 2
+            // ==========================================
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["classroom", "homework", "schoolbag", "repeat"], correct: 3, explanation: "👉 <b>reˈpeat</b> (động từ) nhấn âm 2.<br>❌ Các danh từ ghép còn lại nhấn âm 1." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["Sunday", "Monday", "today", "Friday"], correct: 2, explanation: "👉 <b>toˈday</b> nhấn âm 2.<br>❌ Các thứ trong tuần nhấn âm 1." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["swimming", "collect", "reading", "drawing"], correct: 1, explanation: "👉 <b>colˈlect</b> (động từ) nhấn âm 2.<br>❌ Các danh động từ còn lại nhấn âm 1." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["bedroom", "bathroom", "kitchen", "behind"], correct: 3, explanation: "👉 <b>beˈhind</b> bắt đầu bằng 'be-' nhấn âm 2.<br>❌ Các danh từ phòng ghép nhấn âm 1." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["mountain", "village", "around", "island"], correct: 2, explanation: "👉 <b>aˈround</b> bắt đầu bằng 'a-' nhấn âm 2.<br>❌ Các danh từ tự nhiên còn lại nhấn âm 1." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["morning", "before", "evening", "weekend"], correct: 1, explanation: "👉 <b>beˈfore</b> bắt đầu bằng 'be-' nhấn âm 2.<br>❌ Các từ còn lại nhấn âm 1." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["doctor", "teacher", "prepare", "farmer"], correct: 2, explanation: "👉 <b>preˈpare</b> (động từ) nhấn âm 2.<br>❌ Các danh từ chỉ nghề nghiệp nhấn âm 1." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["answer", "travel", "follow", "recycle"], correct: 3, explanation: "👉 <b>reˈcycle</b> nhấn âm 2.<br>❌ Các động từ còn lại là ngoại lệ nhấn âm 1." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["favourite", "computer", "family", "beautiful"], correct: 1, explanation: "👉 <b>comˈputer</b> nhấn âm 2.<br>❌ Các từ còn lại nhấn âm 1." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["accident", "hospital", "important", "medicine"], correct: 2, explanation: "👉 <b>imˈportant</b> nhấn âm 2.<br>❌ Các từ còn lại nhấn âm 1." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["dangerous", "delicious", "wonderful", "beautiful"], correct: 1, explanation: "👉 <b>deˈlicious</b> nhấn âm 2.<br>❌ Các tính từ dài còn lại nhấn âm 1." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["natural", "popular", "exciting", "capital"], correct: 2, explanation: "👉 <b>exˈciting</b> nhấn âm 2.<br>❌ Các từ còn lại nhấn âm 1." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["protection", "engineer", "pollution", "vacation"], correct: 1, explanation: "👉 <b>engiˈneer</b> đuôi -eer nhấn âm 3.<br>❌ Các từ đuôi -tion nhấn âm 2." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["Vietnamese", "exercise", "Japanese", "engineer"], correct: 1, explanation: "👉 <b>ˈexercise</b> nhấn âm 1.<br>❌ Các từ còn lại nhấn âm 3." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["education", "holiday", "information", "celebration"], correct: 1, explanation: "👉 <b>ˈholiday</b> nhấn âm 1.<br>❌ Các từ còn lại đuôi -tion nhấn âm 3." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["animal", "adventure", "environment", "attractive"], correct: 0, explanation: "👉 <b>ˈanimal</b> nhấn âm 1.<br>❌ Các từ còn lại nhấn âm 2." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["historic", "favourite", "electric", "fantastic"], correct: 1, explanation: "👉 <b>ˈfavourite</b> nhấn âm 1.<br>❌ Các từ đuôi -ic nhấn âm 2." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["afternoon", "hospital", "engineer", "volunteer"], correct: 1, explanation: "👉 <b>ˈhospital</b> nhấn âm 1.<br>❌ Các từ còn lại nhấn âm cuối (âm 3)." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["expensive", "natural", "delicious", "exciting"], correct: 1, explanation: "👉 <b>ˈnatural</b> nhấn âm 1.<br>❌ Các từ còn lại nhấn âm 2." },
+            { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["communication", "examination", "pronunciation", "medicine"], correct: 3, explanation: "👉 <b>ˈmedicine</b> nhấn âm 1.<br>❌ Các từ đuôi -tion còn lại nhấn âm 4." }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let studentName = "";
+        let isAnswered = false;
+
+        const nameInput = document.getElementById('student-name');
+        const btnStart = document.getElementById('btn-start');
+
+        window.onload = () => {
+            const savedName = localStorage.getItem('studentName');
+            if (savedName) {
+                studentName = savedName;
+                document.getElementById('greeting-text').innerHTML = `Chào con, ${studentName}! <span class="text-2xl">👋</span>`;
+                showScreen('home-screen');
+            }
+        };
+
+        nameInput.addEventListener('input', (e) => {
+            btnStart.disabled = e.target.value.trim().length === 0;
+        });
+
+        btnStart.addEventListener('click', () => {
+            studentName = nameInput.value.trim();
+            localStorage.setItem('studentName', studentName);
+            document.getElementById('greeting-text').innerHTML = `Chào con, ${studentName}! <span class="text-2xl">👋</span>`;
+            showScreen('home-screen');
+        });
+
+        function showScreen(screenId) {
+            ['welcome-screen', 'home-screen', 'theory-screen', 'quiz-screen', 'result-screen'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+            document.getElementById(screenId).classList.remove('hidden');
+        }
+
+        function startPractice() {
+            currentQuestion = 0;
+            score = 0;
+            document.getElementById('total-q').innerText = quizData.length;
+            showScreen('quiz-screen');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            isAnswered = false;
+            const q = quizData[currentQuestion];
+            
+            document.getElementById('current-q-index').innerText = currentQuestion + 1;
+            document.getElementById('progress-bar').style.width = `${((currentQuestion) / quizData.length) * 100}%`;
+            document.getElementById('question-text').innerHTML = q.q;
+            document.getElementById('explanation-box').classList.add('hidden');
+            document.getElementById('btn-next').classList.add('hidden');
+
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+
+            q.options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'sketchnote-btn bg-white w-full py-3 px-4 text-left text-lg font-semibold rounded-2xl hover:bg-gray-50';
+                btn.innerHTML = `<span class="inline-block w-8 font-bold text-[#ff7c00]">${String.fromCharCode(65 + index)}</span> ${opt}`;
+                btn.onclick = () => checkAnswer(index, btn);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selectedIndex, btnElement) {
+            if (isAnswered) return;
+            isAnswered = true;
+
+            const q = quizData[currentQuestion];
+            const isCorrect = selectedIndex === q.correct;
+            const buttons = document.getElementById('options-container').children;
+
+            Array.from(buttons).forEach((btn, idx) => {
+                btn.disabled = true;
+                btn.classList.remove('hover:bg-gray-50', 'transform', 'active:transform');
+                if (idx === q.correct) {
+                    btn.classList.add('bg-[#e6f4f1]', 'border-[#0a6962]'); 
+                } else if (idx === selectedIndex && !isCorrect) {
+                    btn.classList.add('bg-[#fff4eb]', 'border-[#ff7c00]'); 
+                }
+            });
+
+            if (isCorrect) score++;
+
+            const expBox = document.getElementById('explanation-box');
+            const expText = document.getElementById('explanation-text');
+            expBox.classList.remove('hidden');
+            
+            let feedback = isCorrect ? 
+                `<strong style="color: #0a6962; font-family: 'Nunito', sans-serif;">Tuyệt vời! Cô Linda khen con ${studentName} làm rất tốt! 🌟</strong><br><br>` : 
+                `<strong style="color: #d96900; font-family: 'Nunito', sans-serif;">Cố lên nhé! Lắng nghe cô Linda giải thích nè con ${studentName}: 💡</strong><br><br>`;
+            
+            expText.innerHTML = feedback + q.explanation;
+
+            document.getElementById('btn-next').classList.remove('hidden');
+            document.getElementById('progress-bar').style.width = `${((currentQuestion + 1) / quizData.length) * 100}%`;
+        }
+
+        document.getElementById('btn-next').addEventListener('click', () => {
+            currentQuestion++;
+            if (currentQuestion < quizData.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        });
+
+        function showResults() {
+            showScreen('result-screen');
+            document.getElementById('score').innerText = score;
+            document.getElementById('total-score').innerText = quizData.length;
+            document.getElementById('result-greeting').innerText = `Chúc mừng con, ${studentName}!`;
+
+            const percentage = score / quizData.length;
+            if (percentage >= 0.8) {
+                confetti({
+                    particleCount: 250,
+                    spread: 100,
+                    origin: { y: 0.6 },
+                    colors: ['#ff7c00', '#0a6962', '#fde047', '#fbcfe8'],
+                    disableForReducedMotion: true
+                });
+            }
+        }
+    </script>
+</body>
+</html>
