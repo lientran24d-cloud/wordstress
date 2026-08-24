@@ -131,7 +131,7 @@
             font-size: 18px;
         }
 
-       /* Trạng thái đáp án Đúng */
+        /* Trạng thái đáp án Đúng */
         #options-container button.correct {
             background: #dcfce7 !important;
             border-color: #22c55e !important;
@@ -579,6 +579,7 @@
             { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["historic", "fantastic", "athletic", "popular"], correct: 3, explanation: "👉 <b>ˈpopular</b> nhấn âm 1.<br>❌ Các từ đuôi -ic nhấn âm 2." },
             { q: "Chọn từ có trọng âm KHÁC với các từ còn lại:", options: ["forest", "mountain", "prepare", "market"], correct: 2, explanation: "👉 <b>preˈpare</b> nhấn âm 2.<br>❌ Các danh từ tự nhiên nhấn âm 1." }
         ];
+        
         let currentQuestion = 0;
         let score = 0;
         let studentName = "";
@@ -688,11 +689,11 @@
             
             expText.innerHTML = feedback + q.explanation;
 
-           document.getElementById('btn-next').classList.remove('hidden');
+            document.getElementById('btn-next').classList.remove('hidden');
             document.getElementById('progress-bar').style.width = `${((currentQuestion + 1) / quizData.length) * 100}%`;
         }
 
-        // Đoạn code xử lý nút chuyển câu đã được khôi phục
+        // ĐOẠN NÀY LÀ ĐỂ XỬ LÝ CHUYỂN CÂU VÀ KẾT THÚC BÀI
         document.getElementById('btn-next').addEventListener('click', () => {
             currentQuestion++;
             if (currentQuestion < quizData.length) {
