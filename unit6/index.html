@@ -132,19 +132,50 @@
         }
 
         /* Trạng thái đáp án Đúng */
-        #options-container button.bg-\\[\\#e6f4f1\\] {
+        #options-container button.correct {
             background: #dcfce7 !important;
             border-color: #22c55e !important;
             box-shadow: 0 5px 0 #16a34a !important;
             color: #166534 !important;
             animation: bounce-sm 0.4s ease;
         }
+        /* Đổi màu ô chữ cái A, B, C, D sang xanh khi đúng */
+        #options-container button.correct span {
+            background: #22c55e !important;
+            border-color: #ffffff !important;
+            box-shadow: 0 3px 0 #16a34a !important;
+        }
+
         /* Trạng thái đáp án Sai */
-        #options-container button.bg-\\[\\#fff4eb\\] {
+        #options-container button.incorrect {
             background: #fee2e2 !important;
             border-color: #ef4444 !important;
             box-shadow: 0 5px 0 #dc2626 !important;
             color: #991b1b !important;
+            animation: shake-sm 0.4s ease;
+        }
+        /* Đổi màu ô chữ cái A, B, C, D sang đỏ khi sai */
+        #options-container button.incorrect span {
+            background: #ef4444 !important;
+            border-color: #ffffff !important;
+            box-shadow: 0 3px 0 #dc2626 !important;
+        }
+
+        /* Trạng thái làm mờ đáp án nhiễu */
+        #options-container button.dimmed {
+            opacity: 0.4 !important;
+            filter: grayscale(80%) blur(0.5px);
+            transition: all 0.3s ease !important;
+            box-shadow: none !important;
+            transform: translateY(2px);
+        }
+
+        /* Hiệu ứng rung nhẹ khi chọn sai */
+        @keyframes shake-sm {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
         }
 
         /* Progress Bar sọc kẹo ngọt */
@@ -247,12 +278,14 @@
             </div>
             
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <!-- Theory Card -->
                 <div onclick="showScreen('theory-screen')" class="group cursor-pointer bg-white border-4 border-gray-200 rounded-3xl p-6 text-center hover:border-[#0a6962] hover:bg-[#f0fdfa] transition-all shadow-[0_6px_0_#e2e8f0] hover:shadow-[0_8px_0_#0a6962] hover:-translate-y-2 relative overflow-hidden">
                     <div class="absolute -right-4 -top-4 w-24 h-24 bg-teal-100 rounded-full z-0 opacity-50 group-hover:scale-150 transition-transform duration-500"></div>
                     <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Books.png" class="w-24 h-24 mx-auto mb-4 relative z-10 animate-float group-hover:scale-110 transition-transform">
                     <h2 class="text-3xl font-black text-[#0a6962] mb-2 relative z-10">📖 Lý thuyết</h2>
                     <p class="text-base font-bold text-gray-500 px-2 relative z-10">Bí kíp đánh trọng âm cực chuẩn từ cô Linda.</p>
                 </div>                
+                <!-- Practice Card -->
                 <div onclick="startPractice()" class="group cursor-pointer bg-white border-4 border-gray-200 rounded-3xl p-6 text-center hover:border-[#ff7c00] hover:bg-[#fff7ed] transition-all shadow-[0_6px_0_#e2e8f0] hover:shadow-[0_8px_0_#ff7c00] hover:-translate-y-2 relative overflow-hidden">
                     <div class="absolute -left-4 -bottom-4 w-24 h-24 bg-orange-100 rounded-full z-0 opacity-50 group-hover:scale-150 transition-transform duration-500"></div>
                     <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Pencil.png" class="w-24 h-24 mx-auto mb-4 relative z-10 animate-float group-hover:scale-110 transition-transform" style="animation-delay: 1s;">
@@ -580,12 +613,19 @@
             Array.from(buttons).forEach((btn, idx) => {
                 btn.disabled = true;
                 btn.classList.remove('hover:bg-gray-50', 'transform', 'active:transform');
+                
                 if (idx === q.correct) {
-                    btn.classList.add('bg-[#e6f4f1]', 'border-[#0a6962]'); 
+                    btn.classList.add('correct');
+                    btn.innerHTML += `<i data-lucide="check-circle-2" class="w-7 h-7 ml-auto text-green-600 drop-shadow-md"></i>`;
                 } else if (idx === selectedIndex && !isCorrect) {
-                    btn.classList.add('bg-[#fff4eb]', 'border-[#ff7c00]'); 
+                    btn.classList.add('incorrect');
+                    btn.innerHTML += `<i data-lucide="x-circle" class="w-7 h-7 ml-auto text-red-600 drop-shadow-md"></i>`;
+                } else {
+                    btn.classList.add('dimmed');
                 }
             });
+
+            lucide.createIcons();
 
             if (isCorrect) score++;
 
