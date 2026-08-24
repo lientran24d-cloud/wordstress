@@ -125,18 +125,51 @@
             font-size: 18px;
         }
 
-        #options-container button.bg-\\[\\#e6f4f1\\] {
+        /* Trạng thái đáp án Đúng */
+        #options-container button.correct {
             background: #dcfce7 !important;
             border-color: #22c55e !important;
             box-shadow: 0 5px 0 #16a34a !important;
             color: #166534 !important;
             animation: bounce-sm 0.4s ease;
         }
-        #options-container button.bg-\\[\\#fff4eb\\] {
+        /* Đổi màu ô chữ cái A, B, C, D sang xanh khi đúng */
+        #options-container button.correct span {
+            background: #22c55e !important;
+            border-color: #ffffff !important;
+            box-shadow: 0 3px 0 #16a34a !important;
+        }
+
+        /* Trạng thái đáp án Sai */
+        #options-container button.incorrect {
             background: #fee2e2 !important;
             border-color: #ef4444 !important;
             box-shadow: 0 5px 0 #dc2626 !important;
             color: #991b1b !important;
+            animation: shake-sm 0.4s ease;
+        }
+        /* Đổi màu ô chữ cái A, B, C, D sang đỏ khi sai */
+        #options-container button.incorrect span {
+            background: #ef4444 !important;
+            border-color: #ffffff !important;
+            box-shadow: 0 3px 0 #dc2626 !important;
+        }
+
+        /* Trạng thái làm mờ đáp án nhiễu */
+        #options-container button.dimmed {
+            opacity: 0.4 !important;
+            filter: grayscale(80%) blur(0.5px);
+            transition: all 0.3s ease !important;
+            box-shadow: none !important;
+            transform: translateY(2px);
+        }
+
+        /* Hiệu ứng rung nhẹ khi chọn sai */
+        @keyframes shake-sm {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
         }
 
         .candy-stripe {
@@ -611,15 +644,29 @@
             const isCorrect = selectedIndex === q.correct;
             const buttons = document.getElementById('options-container').children;
 
+            // Xử lý giao diện cho từng nút đáp án
             Array.from(buttons).forEach((btn, idx) => {
                 btn.disabled = true;
                 btn.classList.remove('hover:bg-gray-50', 'transform', 'active:transform');
+                
                 if (idx === q.correct) {
-                    btn.classList.add('bg-[#e6f4f1]', 'border-[#0a6962]'); 
+                    // Đánh dấu đáp án Đúng
+                    btn.classList.add('correct');
+                    // Thêm icon tích xanh đẩy về góc phải (ml-auto)
+                    btn.innerHTML += `<i data-lucide="check-circle-2" class="w-7 h-7 ml-auto text-green-600 drop-shadow-md"></i>`;
                 } else if (idx === selectedIndex && !isCorrect) {
-                    btn.classList.add('bg-[#fff4eb]', 'border-[#ff7c00]'); 
+                    // Đánh dấu đáp án Sai mà học sinh đã chọn
+                    btn.classList.add('incorrect');
+                    // Thêm icon dấu X đỏ đẩy về góc phải
+                    btn.innerHTML += `<i data-lucide="x-circle" class="w-7 h-7 ml-auto text-red-600 drop-shadow-md"></i>`;
+                } else {
+                    // Làm mờ các đáp án nhiễu còn lại
+                    btn.classList.add('dimmed');
                 }
             });
+
+            // Yêu cầu thư viện render lại các icon vừa được thêm vào
+            lucide.createIcons();
 
             if (isCorrect) score++;
 
