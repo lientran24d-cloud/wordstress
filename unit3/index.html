@@ -99,6 +99,8 @@
             font-family: 'Nunito', sans-serif !important;
             font-weight: 800 !important;
             color: #334155 !important;
+            position: relative !important;
+            padding-right: 45px !important;
         }
         #options-container button:hover:not(:disabled) {
             border-color: var(--teal) !important;
@@ -123,20 +125,40 @@
             box-shadow: 0 3px 0 var(--orange-dark);
             margin-right: 15px;
             font-size: 18px;
+            flex-shrink: 0;
         }
 
-        #options-container button.bg-\\[\\#e6f4f1\\] {
+        /* Trạng thái đáp án Đúng */
+        #options-container button.correct-answer {
             background: #dcfce7 !important;
             border-color: #22c55e !important;
             box-shadow: 0 5px 0 #16a34a !important;
             color: #166534 !important;
             animation: bounce-sm 0.4s ease;
         }
-        #options-container button.bg-\\[\\#fff4eb\\] {
+        #options-container button.correct-answer::after {
+            content: '✓';
+            position: absolute;
+            right: 20px;
+            font-size: 26px;
+            color: #16a34a;
+            font-weight: 900;
+        }
+
+        /* Trạng thái đáp án Sai */
+        #options-container button.wrong-answer {
             background: #fee2e2 !important;
             border-color: #ef4444 !important;
             box-shadow: 0 5px 0 #dc2626 !important;
             color: #991b1b !important;
+        }
+        #options-container button.wrong-answer::after {
+            content: '✕';
+            position: absolute;
+            right: 20px;
+            font-size: 22px;
+            color: #dc2626;
+            font-weight: 900;
         }
 
         .candy-stripe {
@@ -542,7 +564,7 @@
             
             document.getElementById('current-q-index').innerText = currentQuestion + 1;
             document.getElementById('progress-bar').style.width = `${((currentQuestion) / quizData.length) * 100}%`;
-            document.getElementById('question-text').innerText = q.q;
+            document.getElementById('question-text').innerHTML = q.q;
             document.getElementById('explanation-box').classList.add('hidden');
             document.getElementById('btn-next').classList.add('hidden');
 
@@ -569,10 +591,14 @@
             Array.from(buttons).forEach((btn, idx) => {
                 btn.disabled = true;
                 btn.classList.remove('hover:bg-gray-50', 'transform', 'active:transform');
+                
+                // Hiệu ứng tích xanh, dấu nhân đỏ và làm mờ đáp án nhiễu
                 if (idx === q.correct) {
-                    btn.classList.add('bg-[#e6f4f1]', 'border-[#0a6962]'); 
+                    btn.classList.add('correct-answer'); 
                 } else if (idx === selectedIndex && !isCorrect) {
-                    btn.classList.add('bg-[#fff4eb]', 'border-[#ff7c00]'); 
+                    btn.classList.add('wrong-answer'); 
+                } else {
+                    btn.classList.add('opacity-50'); 
                 }
             });
 
